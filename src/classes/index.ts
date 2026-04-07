@@ -4,8 +4,6 @@ import { ErrorBuilder } from "./ErrorBuilder";
 import { Mail } from "./Mail";
 import { Redis } from "./Redis";
 
-export * from "./AppError";
-
 export const classes = {
   AppError,
   AppSuccess,

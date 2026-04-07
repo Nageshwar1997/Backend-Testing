@@ -1,4 +1,4 @@
-import { IAppError } from "../types";
+import { IAppError } from "@/types";
 
 export class AppError extends Error {
   statusCode: IAppError["statusCode"];

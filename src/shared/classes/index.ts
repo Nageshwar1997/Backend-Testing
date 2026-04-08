@@ -4,7 +4,7 @@ import { ErrorBuilder } from "./ErrorBuilder";
 import { Mail } from "./Mail";
 import { Redis } from "./Redis";
 
-export const classes = {
+export const sharedClasses = {
   AppError,
   AppSuccess,
   ErrorBuilder,

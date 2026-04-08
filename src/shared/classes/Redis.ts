@@ -1,16 +1,16 @@
 import { Types } from "mongoose";
 import { RedisClientType } from "redis";
-import { UserModule } from "../Modules";
-import { constants } from "../constants";
-import { PARSE_DATA, STRINGIFY_DATA } from "../utils";
-import { configs } from "../configs";
+import { TUserModule, userModule } from "../../modules/user";
+import { sharedConfigs } from "../configs";
+import { sharedUtils } from "../utils";
+import { sharedConstants } from "../constants";
 
 export class Redis {
   private client: RedisClientType | null = null;
   private isReady: boolean = false;
 
   constructor() {
-    this.client = configs.Redis;
+    this.client = sharedConfigs.redis;
 
     this.client.on("error", (err) => {
       console.log("❌ Redis Error:", err);
@@ -57,7 +57,7 @@ export class Redis {
 
   // DB fetch helper
   private getDbUser = async (userId: string | Types.ObjectId) => {
-    return await UserModule.Services.getUserById({
+    return await userModule.services.get.user_by_id({
       id: userId,
       lean: true,
       password: false,
@@ -65,7 +65,7 @@ export class Redis {
   };
 
   // Set user in Redis
-  public async setCachedUser(user: UserModule.Types.UserProps) {
+  public async setCachedUser(user: TUserModule.IUser) {
     const client = this.getClient();
     if (!client || !user) return;
 
@@ -74,15 +74,15 @@ export class Redis {
 
     await client.setEx(
       `user:${user._id}`,
-      constants.common.MINUTE * constants.common.MINUTE,
-      STRINGIFY_DATA(restUser),
+      sharedConstants.HOUR,
+      sharedUtils.JSON.stringify(restUser),
     );
   }
 
   // Get user (Redis fallback → DB → Redis set)
   public async getCachedUser(
     userId: string | Types.ObjectId,
-  ): Promise<UserModule.Types.UserProps | null> {
+  ): Promise<TUserModule.IUser | null> {
     const client = this.getClient();
 
     // Redis unavailable → direct DB
@@ -95,7 +95,7 @@ export class Redis {
 
     if (cachedUser) {
       try {
-        return PARSE_DATA(cachedUser);
+        return sharedUtils.JSON.parse(cachedUser);
       } catch {
         return await this.getDbUser(userId);
       }
@@ -115,7 +115,7 @@ export class Redis {
   /* ---------------- INVALIDATION / WRITE-THROUGH ---------------- */
 
   // Write-through: update Redis after DB update
-  public async updateCachedUser(user: UserModule.Types.UserProps) {
+  public async updateCachedUser(user: TUserModule.IUser) {
     const client = this.getClient();
     if (!client || !user) return;
 

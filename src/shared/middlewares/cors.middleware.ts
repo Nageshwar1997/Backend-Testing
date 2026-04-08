@@ -1,0 +1,23 @@
+import cors from "cors";
+import { sharedConstants } from "../constants";
+import { sharedClasses } from "../classes";
+
+
+export const checkOrigin = cors({
+  origin: (origin, callback) => {
+    if (!origin || sharedConstants.ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(
+        new sharedClasses.AppError({
+          message: "Not allowed by CORS",
+          statusCode: 403,
+          code: "AUTH_ERROR",
+        }),
+      );
+    }
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+});

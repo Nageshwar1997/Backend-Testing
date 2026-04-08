@@ -1,5 +1,5 @@
+import { TErrorPayload } from "../types";
 import { AppError } from "./AppError";
-import { TErrorPayload } from "@/types";
 
 export class ErrorBuilder {
   private fieldErrors: TErrorPayload["fieldErrors"] = {};

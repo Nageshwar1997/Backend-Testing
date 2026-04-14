@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { schemaValidator } from "@beautinique/be-zod";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { segregateErrors } from "@/utils";
 
 export const zodMiddleware =

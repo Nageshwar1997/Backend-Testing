@@ -1,4 +1,4 @@
-import { AppSuccess } from "@/classes";
+import { AppSuccess } from "@beautinique/be-classes";
 import { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {

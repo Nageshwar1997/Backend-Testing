@@ -1,11 +1,10 @@
-import { Types } from "mongoose";
 import { TProductModule } from "@/modules/product";
+import { _ID, TId } from "@/types";
 
-export type TCartProduct = {
-  _id: Types.ObjectId;
-  cart: Types.ObjectId;
-  product: Types.ObjectId;
-  shade?: Types.ObjectId;
+export type TCartProduct = TId & {
+  cart: _ID;
+  product: _ID;
+  shade?: _ID | null;
   quantity: number;
 };
 

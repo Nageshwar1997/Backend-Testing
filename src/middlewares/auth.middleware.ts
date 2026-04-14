@@ -5,7 +5,7 @@ import { AuthRequest } from "../types";
 import { userModule } from "@/modules/user";
 import { envs } from "../envs";
 import { TRole } from "@beautinique/be-constants";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { getAuthorizationToken, isValidMongoId, toMongoId } from "@/utils";
 
 const getUserIdFromToken = (req: Request) => {

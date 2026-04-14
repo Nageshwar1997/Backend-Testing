@@ -7,8 +7,8 @@ import {
   IMulterDefaultError,
   IMulterValidation,
 } from "@/types";
-import { ErrorBuilder } from "@/classes";
 import { envs } from "@/envs";
+import { ErrorBuilder } from "@beautinique/be-classes";
 
 const getCustomError = ({ files = [], format, size }: IMulterCustomError) => {
   const error = new ErrorBuilder();

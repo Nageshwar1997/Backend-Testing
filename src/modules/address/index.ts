@@ -1,1 +1,1 @@
-export * as TAddressModule from "./types";
+export * as TUserModule from "./types";

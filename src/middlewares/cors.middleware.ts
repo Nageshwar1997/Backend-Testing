@@ -1,5 +1,5 @@
 import cors from "cors";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { ORIGINS } from "@/constants";
 
 export const checkOrigin = cors({

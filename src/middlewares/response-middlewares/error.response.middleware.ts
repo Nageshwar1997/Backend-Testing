@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Error as MongooseError } from "mongoose";
 
 import { envs } from "@/envs";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { segregateErrors } from "@/utils";
 
 const baseResponse = { success: false, error: true };

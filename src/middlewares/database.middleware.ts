@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { connection } from "mongoose";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 
 export const checkDbConnection = async (
   _: Request,

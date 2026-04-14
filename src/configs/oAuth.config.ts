@@ -26,7 +26,7 @@ const googleAuthConfig = new google.auth.OAuth2(
   getSocialAuthRedirectURL("GOOGLE"),
 );
 
-const googleAuthClient = {
+export const googleAuthClient = {
   url: googleAuthConfig.generateAuthUrl({
     access_type: "offline",
     scope: [
@@ -51,7 +51,7 @@ const googleAuthClient = {
   },
 };
 
-const linkedinAuthClient = {
+export const linkedinAuthClient = {
   url: `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${envs.oAuth.linkedin.client_id}&redirect_uri=${encodeURIComponent(
     getSocialAuthRedirectURL("LINKEDIN"),
   )}&scope=openid%20profile%20email`,
@@ -81,7 +81,7 @@ const linkedinAuthClient = {
   },
 };
 
-const githubAuthClient = {
+export const githubAuthClient = {
   url: `https://github.com/login/oauth/authorize?${new URLSearchParams({
     client_id: envs.oAuth.github.client_id,
     redirect_uri: getSocialAuthRedirectURL("GITHUB"),
@@ -125,10 +125,4 @@ const githubAuthClient = {
 
     return profile;
   },
-};
-
-export const oAuthConfig = {
-  google: googleAuthClient,
-  linkedin: linkedinAuthClient,
-  github: githubAuthClient,
 };

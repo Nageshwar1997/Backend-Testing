@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { randomUUID } from "crypto";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 
 type CheckOptions = {
   body?: boolean;

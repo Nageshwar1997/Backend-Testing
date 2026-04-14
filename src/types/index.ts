@@ -81,5 +81,3 @@ export type TTimestamp = { createdAt: Date; updatedAt: Date };
 /* ============================ Common Types End ============================ */
 
 /* ====================================== || ====================================== */
-
-export * as TSharedInternal from ".";

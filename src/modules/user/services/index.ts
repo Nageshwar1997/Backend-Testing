@@ -1,13 +1,18 @@
 import { Types } from "mongoose";
 import { IUser } from "../types";
 import { User } from "../models";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { redisService } from "@/services";
+import { _ID } from "@/types";
+import { envs } from "@/envs";
+import jwt from "jsonwebtoken";
 
-export const getUserByEmail = async (
-  email: string,
-  lean?: boolean,
-): Promise<IUser | null> => {
+export const getUserByEmail = async ({
+  email,
+  lean,
+}: Pick<IUser, "email"> & {
+  lean?: boolean;
+}): Promise<IUser | null> => {
   let user: IUser | null = null;
   if (lean) {
     user = await User.findOne({ email }).lean();
@@ -18,7 +23,7 @@ export const getUserByEmail = async (
 };
 
 export const updateUser = async (
-  userId: string | Types.ObjectId | undefined,
+  userId: string | Types.ObjectId,
   data: Partial<IUser>,
 ): Promise<IUser> => {
   if (!userId)
@@ -40,10 +45,12 @@ export const updateUser = async (
   return user;
 };
 
-export const getUserByPhoneNumber = async (
-  phoneNumber: string,
-  lean?: boolean,
-): Promise<IUser | null> => {
+export const getUserByPhoneNumber = async ({
+  phoneNumber,
+  lean,
+}: Pick<IUser, "phoneNumber"> & {
+  lean?: boolean;
+}): Promise<IUser | null> => {
   let user: IUser | null = null;
   if (lean) {
     user = await User.findOne({ phoneNumber }).lean();
@@ -53,11 +60,13 @@ export const getUserByPhoneNumber = async (
   return user;
 };
 
-export const getUserByEmailOrPhoneNumber = async (
-  email: string,
-  phoneNumber: string,
-  lean?: boolean,
-): Promise<IUser | null> => {
+export const getUserByEmailOrPhoneNumber = async ({
+  email,
+  phoneNumber,
+  lean,
+}: Pick<IUser, "email" | "phoneNumber"> & {
+  lean?: boolean;
+}): Promise<IUser> => {
   let user: IUser | null = null;
   if (lean) {
     user = await User.findOne({
@@ -89,7 +98,7 @@ export const getUserById = async ({
   lean = true,
   password = false,
 }: {
-  id: string | Types.ObjectId;
+  id: string | _ID;
   lean?: boolean;
   password?: boolean;
 }): Promise<IUser> => {
@@ -110,14 +119,28 @@ export const getUserById = async ({
   return user;
 };
 
-export const userModuleServices = {
-  get: {
-    user_by_email: getUserByEmail,
-    user_by_phone_number: getUserByPhoneNumber,
-    user_by_email_or_phone_number: getUserByEmailOrPhoneNumber,
-    user_by_id: getUserById,
-  },
-  update: {
-    user: updateUser,
-  },
+export const generateToken = (userId: _ID | string): string => {
+  if (!envs.jwt_secret) {
+    throw new AppError({
+      message: "JWT secret not defined",
+      statusCode: 500,
+      code: "INTERNAL_ERROR",
+    });
+  }
+
+  try {
+    const token = jwt.sign({ userId }, envs.jwt_secret, { expiresIn: "1d" });
+
+    if (!token) {
+      throw new AppError({
+        message: "Failed to generate token",
+        statusCode: 500,
+        code: "INTERNAL_ERROR",
+      });
+    }
+
+    return token;
+  } catch (error) {
+    throw error;
+  }
 };

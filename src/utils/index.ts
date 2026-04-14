@@ -1,8 +1,10 @@
 import { Types } from "mongoose";
 import { TRole } from "@beautinique/be-constants";
-import { AppError } from "@/classes";
+import { AppError } from "@beautinique/be-classes";
 import { envs } from "@/envs";
 import { _ID, TFieldErrors } from "@/types";
+import axios from "axios";
+import { randomBytes } from "crypto";
 
 const getURL = (devUrl: string, prodUrl: string) => {
   return envs.is_dev ? devUrl : prodUrl;
@@ -87,3 +89,18 @@ export const isValidMongoId = (
 export const getAuthorizationToken = (token: string) => {
   return token.startsWith("Bearer ") ? token.split(" ")?.[1] : token;
 };
+
+export const getImageAsBuffer = async (url: string) => {
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+
+  return {
+    buffer: Buffer.from(response.data),
+    mimetype: response.headers["content-type"],
+  };
+};
+
+export const generateTokenForRedis = (bytes: number) =>
+  randomBytes(bytes).toString("hex");
+
+export const generateOtp = () =>
+  String(Math.floor(100000 + Math.random() * 900000));

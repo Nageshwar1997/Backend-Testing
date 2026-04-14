@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { RedisClientType } from "redis";
 import { HOUR } from "@beautinique/be-constants";
 import { redisClientConfig } from "@/configs";
-import { TUserModule, userModule } from "@/modules/user";
+import { UserModule } from "@/modules";
 import { parseData, stringifyData } from "@/utils";
 
 export class RedisService {
@@ -57,7 +57,7 @@ export class RedisService {
 
   // DB fetch helper
   private getDbUser = async (userId: string | Types.ObjectId) => {
-    return await userModule.services.get.user_by_id({
+    return await UserModule.Services.getUserById({
       id: userId,
       lean: true,
       password: false,
@@ -65,7 +65,7 @@ export class RedisService {
   };
 
   // Set user in Redis
-  public async setCachedUser(user: TUserModule.IUser) {
+  public async setCachedUser(user: UserModule.Types.IUser) {
     const client = this.getClient();
     if (!client || !user) return;
 
@@ -78,7 +78,7 @@ export class RedisService {
   // Get user (Redis fallback → DB → Redis set)
   public async getCachedUser(
     userId: string | Types.ObjectId,
-  ): Promise<TUserModule.IUser | null> {
+  ): Promise<UserModule.Types.IUser | null> {
     const client = this.getClient();
 
     // Redis unavailable → direct DB
@@ -111,7 +111,7 @@ export class RedisService {
   /* ---------------- INVALIDATION / WRITE-THROUGH ---------------- */
 
   // Write-through: update Redis after DB update
-  public async updateCachedUser(user: TUserModule.IUser) {
+  public async updateCachedUser(user: UserModule.Types.IUser) {
     const client = this.getClient();
     if (!client || !user) return;
 

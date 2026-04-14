@@ -6,8 +6,8 @@ import {
 } from "socket.io";
 
 import { chatbotModule } from "@/modules/chatbot";
-import { AppError } from "@/classes";
 import { ORIGINS } from "@/constants";
+import { AppError } from "@beautinique/be-classes";
 
 let io: SocketIOServer | null = null;
 

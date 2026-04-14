@@ -1,9 +1,5 @@
-import { userModuleModels } from "./models";
-import { userModuleServices } from "./services";
-
-export * as TUserModule from "./types";
-
-export const userModule = {
-  models: userModuleModels,
-  services: userModuleServices,
-};
+export * as Controllers from "./controllers";
+export * as Models from "./models";
+export * as Services from "./services";
+export * as Types from "./types";
+export * as Utils from "./utils";

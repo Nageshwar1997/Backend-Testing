@@ -1,0 +1,245 @@
+import { NextFunction, Request, Response } from "express";
+import bcrypt from "bcryptjs";
+import { generateToken, getUserByEmailOrPhoneNumber } from "../services";
+import { AppError } from "@beautinique/be-classes";
+import { redisService } from "@/services";
+import {
+  githubAuthClient,
+  googleAuthClient,
+  linkedinAuthClient,
+} from "@/configs";
+import { AuthRequest } from "@/types";
+import { authSuccessRedirectUrl, getOAuthDbPayload } from "../utils";
+import { User } from "../models";
+
+export const manualLoginController = async (req: Request, res: Response) => {
+  const { email, password, phoneNumber } = req.body ?? {};
+
+  const user = await getUserByEmailOrPhoneNumber({
+    email,
+    phoneNumber,
+    lean: true,
+  });
+
+  if (!user.providers.includes("MANUAL")) {
+    // Check if user has MANUAL login
+    throw new AppError({
+      message: `This account was created using an oAuth (${user.providers.join(
+        " / ",
+      )}) login. Please login using your provider (e.g., ${user.providers.join(
+        ", ",
+      )}).`,
+      code: "AUTH_ERROR",
+      statusCode: 401,
+    });
+  }
+
+  if (!user.password) {
+    throw new AppError({
+      message:
+        "No password set for this account. Please set a password to login manually.",
+      statusCode: 400,
+    });
+  }
+
+  // Compare password
+  const isPasswordMatch = bcrypt.compareSync(password, user.password);
+
+  if (!isPasswordMatch) {
+    throw new AppError({
+      message: "Login Failed",
+      statusCode: 400,
+      code: "AUTH_ERROR",
+      fieldErrors: { password: ["Wrong password"] },
+    });
+  }
+
+  const token = generateToken(user._id);
+
+  const { password: _, ...restUser } = user;
+
+  await redisService.setCachedUser(user);
+
+  res.success(200, "User logged in successfully", { token, user: restUser });
+};
+
+export const googleRedirectController = async (
+  _req: Request,
+  res: Response,
+) => {
+  const url = googleAuthClient.url;
+  res.redirect(url);
+};
+
+export const googleCallbackController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code } = req.query;
+
+    if (!code)
+      throw new AppError({
+        message: "No code returned from Google",
+        statusCode: 400,
+      });
+
+    // Fetch user info from Google
+    const profile = await googleAuthClient.decode(code);
+    if (!profile)
+      throw new AppError({ message: "User info not found", statusCode: 400 });
+
+    // Prepare payload
+    const payload = await getOAuthDbPayload(profile, "GOOGLE");
+
+    // Check if user already exists (email = primary identity)
+    let user = await User.findOne({
+      email: payload.email,
+    });
+
+    if (user) {
+      // If GOOGLE not linked yet, link it
+      if (!user.providers.includes("GOOGLE")) {
+        user.providers.push("GOOGLE");
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = await User.create(payload);
+    }
+
+    const token = generateToken(user._id);
+
+    await redisService.setCachedUser(user);
+
+    res.redirect(authSuccessRedirectUrl(token));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const linkedinRedirectController = async (
+  _req: Request,
+  res: Response,
+) => {
+  const url = linkedinAuthClient.url;
+
+  res.redirect(url);
+};
+
+export const linkedinCallbackController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code } = req.query;
+
+    if (!code)
+      throw new AppError({
+        message: "No code returned from LinkedIn",
+        statusCode: 400,
+      });
+
+    const { id_token } = await linkedinAuthClient.token_response(code);
+
+    const data = linkedinAuthClient.decode(id_token);
+
+    const payload = await getOAuthDbPayload(data, "LINKEDIN");
+
+    // Find user by email (primary identity)
+    let user = await User.findOne({
+      email: payload.email,
+    });
+
+    if (user) {
+      // Link provider if not already linked
+      if (!user.providers.includes("LINKEDIN")) {
+        user.providers.push("LINKEDIN");
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = await User.create(payload);
+    }
+
+    const token = generateToken(user._id);
+
+    await redisService.setCachedUser(user);
+
+    res.redirect(authSuccessRedirectUrl(token));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const githubRedirectController = async (
+  _req: Request,
+  res: Response,
+) => {
+  const url = githubAuthClient.url;
+
+  res.redirect(url);
+};
+
+export const githubCallbackController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code } = req.query;
+
+    if (!code)
+      throw new AppError({
+        message: "No code returned from GitHub",
+        statusCode: 400,
+      });
+
+    const { access_token } = await githubAuthClient.token_response(code);
+
+    if (!access_token) {
+      throw new AppError({
+        message: "Access token not found",
+        statusCode: 400,
+      });
+    }
+
+    const data = await githubAuthClient.decode(access_token);
+
+    const payload = await getOAuthDbPayload(data, "GITHUB");
+
+    // Find user by email (primary identity)
+    let user = await User.findOne({
+      email: payload.email,
+    });
+
+    if (user) {
+      // Link GitHub provider if not already linked
+      if (!user.providers.includes("GITHUB")) {
+        user.providers.push("GITHUB");
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = await User.create(payload);
+    }
+
+    const token = generateToken(user._id);
+
+    await redisService.setCachedUser(user);
+
+    res.redirect(authSuccessRedirectUrl(token));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const logoutController = async (req: AuthRequest, res: Response) => {
+  const { userId } = req.params ?? {};
+
+  if (userId) redisService.deleteCachedUser(userId?.toString());
+
+  res.success(200, "User logged out successfully");
+};

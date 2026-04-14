@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { AuthRequest } from "../types";
-import { userModule } from "@/modules/user";
+import { UserModule } from "@/modules";
 import { envs } from "../envs";
 import { TRole } from "@beautinique/be-constants";
 import { AppError } from "@beautinique/be-classes";
@@ -80,7 +80,7 @@ export const authenticated =
     try {
       const userId = getUserIdFromToken(req);
 
-      const user = await userModule.services.get.user_by_id({
+      const user = await UserModule.Services.getUserById({
         id: userId,
         lean: true,
         password: needPassword,
@@ -102,7 +102,7 @@ export const authorized =
 
       isValidMongoId(userId, "Invalid userId", 400);
 
-      const user = await userModule.services.get.user_by_id({
+      const user = await UserModule.Services.getUserById({
         id: userId,
         lean: true,
         password: needPassword,

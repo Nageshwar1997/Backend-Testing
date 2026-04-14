@@ -3,7 +3,7 @@ import { schemaValidator } from "@beautinique/be-zod";
 import { AppError } from "@beautinique/be-classes";
 import { segregateErrors } from "@/utils";
 
-export const zodMiddleware =
+export const validateSchema =
   <T extends Parameters<typeof schemaValidator>[0]>(schema: T) =>
   (req: Request, _: Response, next: NextFunction) => {
     const result = schemaValidator(schema, req.body ?? {});

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ClientSession, startSession } from "mongoose";
 
-const tryCatchResponse = (
+export const tryCatchResponse = (
   fn: (req: Request, res: Response, next: NextFunction) => Promise<void>,
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -9,7 +9,7 @@ const tryCatchResponse = (
   };
 };
 
-const tryCatchWithSessionResponse = (
+export const tryCatchWithSessionResponse = (
   fn: (
     req: Request,
     res: Response,
@@ -31,9 +31,4 @@ const tryCatchWithSessionResponse = (
       session.endSession();
     }
   };
-};
-
-export const tryCatchResponseMiddleware = {
-  tryCatch: tryCatchResponse,
-  tryCatchWithSession: tryCatchWithSessionResponse,
 };

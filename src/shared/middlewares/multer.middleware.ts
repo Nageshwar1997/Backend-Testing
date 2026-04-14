@@ -2,40 +2,45 @@ import multer, { MulterError } from "multer";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
 import { sharedClasses } from "../classes";
-import { sharedConstants } from "../constants";
 import { envs } from "../envs";
 import { TSharedInternal } from "../types";
+import { FILE_MIME, MAX_SIZE, MB } from "@beautinique/be-constants";
 
-const getCustomError = ({ files = [], format, size }: TSharedInternal.IMulterCustomError) => {
+const getCustomError = ({
+  files = [],
+  format,
+  size,
+}: TSharedInternal.IMulterCustomError) => {
   const error = new sharedClasses.ErrorBuilder();
 
   // Limits
-  const imageSizeLimit = size?.IMAGE ?? sharedConstants.size.IMAGE;
-  const videoSizeLimit = size?.VIDEO ?? sharedConstants.size.VIDEO;
-  const otherSizeLimit = size?.OTHER ?? sharedConstants.size.OTHER;
+  const imageSizeLimit = size?.IMAGE ?? MAX_SIZE.IMAGE;
+  const videoSizeLimit = size?.VIDEO ?? MAX_SIZE.VIDEO;
+  const otherSizeLimit = size?.OTHER ?? 2 * MB;
 
   // Types
-  const allowedImageTypes = format?.IMAGE ?? sharedConstants.formats.IMAGE;
-  const allowedVideoTypes = format?.VIDEO ?? sharedConstants.formats.VIDEO;
+  const allowedImageTypes = format?.IMAGE ?? FILE_MIME.IMAGE;
+  const allowedVideoTypes = format?.VIDEO ?? FILE_MIME.VIDEO;
   const allowedOtherTypes = format?.OTHER ?? [];
 
   for (const file of files) {
     const { originalname, fieldname, size, mimetype } = file;
 
-    const isImage = allowedImageTypes.includes(mimetype);
-    const isVideo = allowedVideoTypes.includes(mimetype);
+    const isImage = allowedImageTypes.includes(
+      mimetype as (typeof FILE_MIME.IMAGE)[number],
+    );
+    const isVideo = allowedVideoTypes.includes(
+      mimetype as (typeof FILE_MIME.VIDEO)[number],
+    );
     const isOther = allowedOtherTypes.includes(mimetype);
 
-    const fileSizeMB = (size / sharedConstants.size.MB).toFixed(2);
+    const fileSizeMB = (size / MB).toFixed(2);
 
     let allowedSizeMB = "0";
 
-    if (isImage)
-      allowedSizeMB = (imageSizeLimit / sharedConstants.size.MB).toFixed(2);
-    else if (isVideo)
-      allowedSizeMB = (videoSizeLimit / sharedConstants.size.MB).toFixed(2);
-    else if (isOther)
-      allowedSizeMB = (otherSizeLimit / sharedConstants.size.MB).toFixed(2);
+    if (isImage) allowedSizeMB = (imageSizeLimit / MB).toFixed(2);
+    else if (isVideo) allowedSizeMB = (videoSizeLimit / MB).toFixed(2);
+    else if (isOther) allowedSizeMB = (otherSizeLimit / MB).toFixed(2);
 
     // SIZE VALIDATION
     if (isImage && size > imageSizeLimit) {

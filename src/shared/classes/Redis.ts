@@ -3,7 +3,7 @@ import { RedisClientType } from "redis";
 import { TUserModule, userModule } from "../../modules/user";
 import { sharedConfigs } from "../configs";
 import { sharedUtils } from "../utils";
-import { sharedConstants } from "../constants";
+import { HOUR } from "@beautinique/be-constants";
 
 export class Redis {
   private client: RedisClientType | null = null;
@@ -74,7 +74,7 @@ export class Redis {
 
     await client.setEx(
       `user:${user._id}`,
-      sharedConstants.HOUR,
+      HOUR,
       sharedUtils.JSON.stringify(restUser),
     );
   }

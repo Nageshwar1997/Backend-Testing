@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { TUserModule } from "@/modules/user";
-import { shared } from "@/shared";
+import { TAddressType, TCountry } from "@beautinique/be-constants";
 
 export type TAddress = Pick<
   TUserModule.IUser,
@@ -13,9 +13,9 @@ export type TAddress = Pick<
   city: string;
   state: string;
   pinCode: string;
-  country: (typeof shared.constants.ALLOWED_COUNTRIES)[number];
+  country: TCountry;
   gst?: string;
-  type: (typeof shared.constants.ADDRESS_TYPES)[number];
+  type: TAddressType;
 };
 export interface IAddress extends Document, TAddress {
   _id: Types.ObjectId;

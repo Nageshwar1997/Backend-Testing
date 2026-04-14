@@ -6,7 +6,7 @@ import {
 } from "socket.io";
 
 import { sharedClasses } from "../classes";
-import { sharedConstants } from "../constants";
+import { ORIGINS } from "../constants";
 import { chatbotModule } from "@/modules/chatbot";
 
 let io: SocketIOServer | null = null;
@@ -17,7 +17,7 @@ const InitSocket = (server: HttpServer) => {
   io = new SocketIOServer(server, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || sharedConstants.ALLOWED_ORIGINS.includes(origin)) {
+        if (!origin || ORIGINS.includes(origin)) {
           callback(null, true);
         } else {
           callback(

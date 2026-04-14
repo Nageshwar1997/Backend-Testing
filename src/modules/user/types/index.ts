@@ -1,5 +1,5 @@
 import { TAddressModule } from "@/modules/address";
-import { TShared } from "@/shared";
+import { TAuthProvider, TRole } from "@beautinique/be-constants";
 import { Document, Types } from "mongoose";
 
 export interface IUser extends Document {
@@ -9,8 +9,8 @@ export interface IUser extends Document {
   email: string;
   phoneNumber: string;
   password: string;
-  role: TShared.TRole;
-  providers: TShared.TAuthProvider[];
+  role: TRole;
+  providers: TAuthProvider[];
   profilePic?: string;
   createdAt: Date;
   updatedAt: Date;

@@ -1,12 +1,19 @@
 import { TAddressModule } from "@/modules/address";
 import { TCartProductModule } from "@/modules/cart-product";
-import { shared } from "@/shared";
+import {
+  TOrderStatus,
+  TPaymentCurrency,
+  TPaymentMethod,
+  TPaymentMode,
+  TPaymentRefundStatus,
+  TPaymentStatus,
+} from "@beautinique/be-constants";
 import { Types } from "mongoose";
 
 type TPayment = {
-  mode: (typeof shared.constants.ALLOWED_PAYMENT_MODE)[number];
-  status: (typeof shared.constants.RAZORPAY_PAYMENT_STATUS)[number];
-  currency: (typeof shared.constants.ALLOWED_CURRENCIES)[number];
+  mode: TPaymentMode;
+  status: TPaymentStatus;
+  currency: TPaymentCurrency;
   rzp_order_id?: string;
   rzp_payment_id?: string;
   rzp_signature?: string;
@@ -16,7 +23,7 @@ type TPayment = {
   paid_at?: Date;
   email: string;
   contact: string;
-  method: (typeof shared.constants.RAZORPAY_PAYMENT_METHODS)[number];
+  method: TPaymentMethod;
   fee: number;
   tax: number;
 };
@@ -57,10 +64,10 @@ export interface IOrder {
     both: Omit<TAddressModule.TAddress, "user"> | null;
   };
   products: TCartProductModule.IPopulatedCartProduct[];
-  refund_status: (typeof shared.constants.RAZORPAY_REFUND_PAYMENT_STATUS)[number];
+  refund_status: TPaymentRefundStatus;
   discount: number;
   charges: number;
-  status: (typeof shared.constants.ORDER_STATUS)[number];
+  status: TOrderStatus;
   delivered_at?: Date;
   cancelled_at?: Date;
   returned_at?: Date;

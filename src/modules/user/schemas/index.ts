@@ -1,6 +1,11 @@
 import { Schema } from "mongoose";
-import { shared } from "@/shared";
 import { TUserModuleInternal } from "../types";
+import {
+  COUNTRIES,
+  ROLES,
+  SELLER_TYPES,
+  STATES_AND_UTS,
+} from "@beautinique/be-constants";
 
 export const userSchema = new Schema<TUserModuleInternal.IUser>(
   {
@@ -9,7 +14,7 @@ export const userSchema = new Schema<TUserModuleInternal.IUser>(
     phoneNumber: { type: String, trim: true },
     email: { type: String, trim: true, lowercase: true },
     profilePic: { type: String, default: "", trim: true },
-    role: { type: String, enum: shared.constants.ROLES, default: "USER" },
+    role: { type: String, enum: ROLES, default: "USER" },
     password: { type: String, trim: true },
     providers: { type: [String], default: ["MANUAL"] },
   },
@@ -33,13 +38,13 @@ const businessAddressSchema = new Schema<
     state: {
       type: String,
       required: true,
-      enum: shared.constants.STATES_AND_UNION_TERRITORIES,
+      enum: STATES_AND_UTS,
     },
     pinCode: { type: String, required: true, minlength: 6, maxlength: 6 },
     country: {
       type: String,
       required: true,
-      enum: shared.constants.ALLOWED_COUNTRIES,
+      enum: COUNTRIES,
       default: "India",
     },
     pan: {
@@ -78,11 +83,7 @@ const businessDetailsSchema = new Schema<
     name: { type: String, required: true, minlength: 2 },
     email: { type: String, required: true },
     phoneNumber: { type: String, required: true, minlength: 10, maxlength: 10 },
-    category: {
-      type: String,
-      required: true,
-      enum: shared.constants.ALLOWED_BUSINESSES,
-    },
+    category: { type: String, required: true, enum: SELLER_TYPES },
   },
   { versionKey: false, _id: false },
 );

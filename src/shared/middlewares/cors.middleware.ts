@@ -1,11 +1,10 @@
 import cors from "cors";
-import { sharedConstants } from "../constants";
+import { ORIGINS } from "../constants";
 import { sharedClasses } from "../classes";
-
 
 export const checkOrigin = cors({
   origin: (origin, callback) => {
-    if (!origin || sharedConstants.ALLOWED_ORIGINS.includes(origin)) {
+    if (!origin || ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
       callback(

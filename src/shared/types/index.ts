@@ -98,6 +98,17 @@ export interface IZodStringConfigs
   lowerOrUpper?: "upper" | "lower";
 }
 
+export interface IZodNumberConfigs
+  extends TZodCommonBaseConfigs, TZodCompareConfigs {
+  isInt?: boolean;
+  isPositive?: boolean;
+  isNegative?: boolean;
+}
+
+export interface IZodEnumsConfigs extends TZodCommonBaseConfigs {
+  enumValues: readonly string[];
+}
+
 /* ============================ Zod Types End ============================ */
 
 /* ====================================== || ====================================== */

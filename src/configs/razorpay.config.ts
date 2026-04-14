@@ -1,5 +1,5 @@
+import { envs } from "@/envs";
 import Razorpay from "razorpay";
-import { envs } from "../../envs";
 
 export const razorpayConfig = new Razorpay({
   key_id: envs.razorpay.key_id,

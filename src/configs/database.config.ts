@@ -1,5 +1,5 @@
+import { envs } from "@/envs";
 import mongoose from "mongoose";
-import { envs } from "../../envs";
 
 // TypeScript global augmentation
 declare global {
@@ -31,7 +31,7 @@ const MONGO_OPTIONS: IMongoOptions = {
  * @throws {Error} If connection fails
  */
 
-export const databaseConfig = async (): Promise<typeof mongoose> => {
+export const connectDB = async (): Promise<typeof mongoose> => {
   // Use cached connection if exists
   if (cachedConnection) {
     return cachedConnection;

@@ -1,6 +1,6 @@
-import { shared } from "@/shared";
 import { TChatbotModuleInternal } from "../../types";
 import { chatbotModuleModels } from "../../models";
+import { chatbotConfig } from "@/configs";
 
 const removeHTMLTags = (text: string = ""): string => {
   return text
@@ -12,7 +12,7 @@ const removeHTMLTags = (text: string = ""): string => {
 const getEmbeddedProducts = async (
   message: string,
 ): Promise<TChatbotModuleInternal.IAggregatedEmbeddedProduct[]> => {
-  const queryVector = await shared.configs.chatbot.get.embedQuery(message);
+  const queryVector = await chatbotConfig.get.embedQuery(message);
 
   const products = await chatbotModuleModels.EmbeddedProduct.aggregate([
     // Vector search
@@ -198,7 +198,7 @@ const createOrUpdateEmbeddedProduct = async ({
 }: TChatbotModuleInternal.TCreateOrUpdateEmbeddedProduct) => {
   try {
     const searchText = `${title} ${brand} ${category.grandParent} ${category.parent} ${category.child}`;
-    const embeddings = await shared.configs.chatbot.post.embedQuery(searchText);
+    const embeddings = await chatbotConfig.post.embedQuery(searchText);
 
     await chatbotModuleModels.EmbeddedProduct.findOneAndUpdate(
       { product: productId },

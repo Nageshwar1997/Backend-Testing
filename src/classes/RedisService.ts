@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { RedisClientType } from "redis";
 import { HOUR } from "@beautinique/be-constants";
-import { sharedConfigs } from "@/shared/configs";
+import { redisClientConfig } from "@/configs";
 import { TUserModule, userModule } from "@/modules/user";
 import { sharedUtils } from "@/shared/utils";
 
@@ -10,7 +10,7 @@ export class RedisService {
   private isReady: boolean = false;
 
   constructor() {
-    this.client = sharedConfigs.redis;
+    this.client = redisClientConfig;
 
     this.client.on("error", (err) => {
       console.log("❌ Redis Error:", err);

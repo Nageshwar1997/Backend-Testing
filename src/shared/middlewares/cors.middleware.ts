@@ -1,6 +1,6 @@
 import cors from "cors";
-import { ORIGINS } from "../constants";
 import { AppError } from "@/classes";
+import { ORIGINS } from "@/constants";
 
 export const checkOrigin = cors({
   origin: (origin, callback) => {

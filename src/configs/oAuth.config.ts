@@ -1,9 +1,9 @@
 import { google } from "googleapis";
 import axios from "axios";
 import { ParsedQs } from "qs";
-import { sharedUtils } from "../utils";
-import { envs } from "../../envs";
 import { TAuthProvider } from "@beautinique/be-constants";
+import { sharedUtils } from "@/shared/utils";
+import { envs } from "@/envs";
 
 const getSocialAuthRedirectURL = (
   provider: Exclude<TAuthProvider, "MANUAL">,

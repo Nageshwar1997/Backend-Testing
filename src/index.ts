@@ -6,6 +6,9 @@ import http from "http";
 
 import { shared } from "./shared";
 import { mailService, redisService } from "./shared/services";
+import { connectDB, socketConfigs } from "./configs";
+import { envs } from "./envs";
+import { router } from "./router";
 
 const app = express();
 
@@ -35,7 +38,7 @@ app.get("/", (_: Request, res: Response) =>
 );
 
 // API Routes
-app.use("/api", shared.router);
+app.use("/api", router);
 
 // ----------------- ERROR HANDLING -----------------
 app.use(shared.middlewares.response.notFound);
@@ -46,18 +49,18 @@ app.use(shared.middlewares.response.error);
 const server = http.createServer(app);
 
 // Initialize Socket.IO
-shared.configs.socket.init(server);
+socketConfigs.init(server);
 
-shared.configs.socket.namespace("products");
-shared.configs.socket.namespace("orders");
+socketConfigs.namespace("products");
+socketConfigs.namespace("orders");
 
 (async () => {
   try {
-    await shared.configs.connectDB();
+    await connectDB();
     await Promise.all([redisService.connect(), mailService.checkConnection()]);
 
-    server.listen(shared.envs.port, () => {
-      console.log(`Server running on port: ${shared.envs.port}`);
+    server.listen(envs.port, () => {
+      console.log(`Server running on port: ${envs.port}`);
     });
   } catch (err) {
     console.error("❌ Failed to start server:", err);

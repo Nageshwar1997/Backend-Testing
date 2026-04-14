@@ -1,13 +1,13 @@
-import { shared } from "@/shared";
 import { TChatbotModuleInternal } from "../../types";
 import { ClientSession, Types } from "mongoose";
 import { chatbotModuleModels } from "../../models";
+import { chatbotConfig } from "@/configs";
 
 export const getEmbeddedOrders = async (
   message: string,
   userId: string,
 ): Promise<TChatbotModuleInternal.IAggregatedEmbeddedOrder[]> => {
-  const queryVector = await shared.configs.chatbot.get.embedQuery(message);
+  const queryVector = await chatbotConfig.get.embedQuery(message);
 
   const orders = await chatbotModuleModels.EmbeddedOrder.aggregate([
     {
@@ -192,7 +192,7 @@ export const createOrUpdateEmbeddedOrder = async ({
   });
 
   try {
-    const embeddings = await shared.configs.chatbot.post.embedQuery(searchText);
+    const embeddings = await chatbotConfig.post.embedQuery(searchText);
 
     await chatbotModuleModels.EmbeddedOrder.findOneAndUpdate(
       { order: order._id, user: order.user?._id || order.user },

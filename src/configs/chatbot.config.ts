@@ -1,5 +1,5 @@
+import { envs } from "@/envs";
 import { MistralAIEmbeddings } from "@langchain/mistralai";
-import { envs } from "../../envs";
 
 const embedding = (apiKey: string) => {
   return new MistralAIEmbeddings({ apiKey, model: "mistral-embed" });

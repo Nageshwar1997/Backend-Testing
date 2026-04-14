@@ -5,13 +5,13 @@ import {
   Namespace,
 } from "socket.io";
 
-import { ORIGINS } from "../constants";
 import { chatbotModule } from "@/modules/chatbot";
 import { AppError } from "@/classes";
+import { ORIGINS } from "@/constants";
 
 let io: SocketIOServer | null = null;
 
-const InitSocket = (server: HttpServer) => {
+const initSocket = (server: HttpServer) => {
   if (io) return io;
 
   io = new SocketIOServer(server, {
@@ -36,7 +36,7 @@ const InitSocket = (server: HttpServer) => {
   return io;
 };
 
-const HandleNamespace = (name: "products" | "orders") => {
+const handleNamespace = (name: "products" | "orders") => {
   if (!io) throw new Error("Socket.IO not initialized");
 
   const nsp: Namespace = io.of(`/${name}`); // namespace created only when first client connects
@@ -58,6 +58,6 @@ const HandleNamespace = (name: "products" | "orders") => {
 };
 
 export const socketConfigs = {
-  init: InitSocket,
-  namespace: HandleNamespace,
+  init: initSocket,
+  namespace: handleNamespace,
 };

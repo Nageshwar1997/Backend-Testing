@@ -9,6 +9,7 @@ import { IProductChatSession } from "../types";
 import { chatbotModuleServices } from "../services";
 import { chatbotModuleUtils } from "../utils";
 import { envs } from "@/envs";
+import { parseData, stringifyData } from "@/utils";
 
 const productChatHistory = new Map<string, IProductChatSession>();
 
@@ -58,7 +59,7 @@ export const initProductSocket = (socket: Socket) => {
 
       session.history.push(
         new HumanMessage(
-          `User Query: ${message}\nMatched Products: ${JSON.stringify(
+          `User Query: ${message}\nMatched Products: ${stringifyData(
             minimalProducts,
           )}\nGive a clear, helpful answer.`,
         ),
@@ -107,7 +108,7 @@ export const initProductSocket = (socket: Socket) => {
       if (envs.is_dev) {
         if (err?.body) {
           try {
-            const parsed = JSON.parse(err.body);
+            const parsed = parseData(err.body);
             errMsg = parsed.message || errMsg;
           } catch {
             console.log("Failed to parse error body");

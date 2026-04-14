@@ -1,5 +1,6 @@
 import { IUser } from "@/modules/user/types";
 import { Request } from "express";
+import { Types } from "mongoose";
 import { MulterError, Options } from "multer";
 
 /* ============================ Error Types Start ============================ */
@@ -69,6 +70,15 @@ export interface AuthRequest extends Request {
 /* ============================ User Types End ============================ */
 
 /* ====================================== || ====================================== */
+
+/* ============================ Common Types Start ============================ */
+
+export type _ID = Types.ObjectId;
+
+export type TId = { _id: _ID };
+export type TTimestamp = { createdAt: Date; updatedAt: Date };
+
+/* ============================ Common Types End ============================ */
 
 /* ====================================== || ====================================== */
 

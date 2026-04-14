@@ -1,5 +1,6 @@
 import { ContentBlock, HumanMessage, initChatModel } from "langchain";
 import { TChatbotModuleInternal } from "../types";
+import { parseData } from "@/utils";
 
 const normalizeAIContent = (
   content: string | (ContentBlock | { text?: string })[] | undefined,
@@ -43,7 +44,7 @@ const getAiGeneratedSuggestedQuestion = async (
 
     // Try to parse JSON array
     try {
-      const parsed = JSON.parse(content);
+      const parsed = parseData(content);
 
       if (Array.isArray(parsed)) return parsed;
     } catch {

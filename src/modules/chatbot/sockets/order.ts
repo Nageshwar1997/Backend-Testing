@@ -9,6 +9,7 @@ import {
 import { envs } from "@/envs";
 import { chatbotModuleUtils } from "../utils";
 import { chatbotModuleServices } from "../services";
+import { parseData, stringifyData } from "@/utils";
 
 const orderChatHistory = new Map<string, IOrderChatSession>();
 
@@ -67,7 +68,7 @@ export const initOrderSocket = (socket: Socket) => {
       // Push user message with order context
       session.history.push(
         new HumanMessage(
-          `User Query: ${message}\nMatched Orders: ${JSON.stringify(
+          `User Query: ${message}\nMatched Orders: ${stringifyData(
             minimalOrders,
           )}\nGive a clear, helpful answer.`,
         ),
@@ -121,7 +122,7 @@ export const initOrderSocket = (socket: Socket) => {
       if (envs.is_dev) {
         if (err?.body) {
           try {
-            const parsed = JSON.parse(err.body);
+            const parsed = parseData(err.body);
 
             errMsg = parsed.message || errMsg;
           } catch {

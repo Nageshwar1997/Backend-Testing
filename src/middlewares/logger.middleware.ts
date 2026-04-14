@@ -48,7 +48,7 @@ const winstonInstance = winston.createLogger({
 });
 
 // ===== Request Logger =====
-const requestLogger = expressWinston.logger({
+export const requestLog = expressWinston.logger({
   winstonInstance,
   msg: "[{{req.requestId}}] {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
   expressFormat: false,
@@ -59,7 +59,7 @@ const requestLogger = expressWinston.logger({
 });
 
 // ===== Error Logger =====
-const errorLogger = expressWinston.errorLogger({
+export const errorLog = expressWinston.errorLogger({
   winstonInstance,
   msg: "[{{req.requestId}}] {{req.method}} {{req.url}} {{res.statusCode}} {{err.message}}",
   meta: true,
@@ -77,8 +77,3 @@ const errorLogger = expressWinston.errorLogger({
     return !e.statusCode || e.statusCode < 400;
   },
 });
-
-export const loggerMiddleware = {
-  request: requestLogger,
-  error: errorLogger,
-};

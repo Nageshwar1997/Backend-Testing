@@ -1,11 +1,7 @@
 import { Document, Types } from "mongoose";
 import { TAuthProvider, TRole } from "@beautinique/be-constants";
 import { TRegister, TSellerRequest } from "@beautinique/be-zod";
-
-export type _ID = Types.ObjectId;
-
-export type TId = { _id: _ID };
-export type TTimestamp = { createdAt: Date; updatedAt: Date };
+import { _ID, TId, TTimestamp } from "@/types";
 
 export interface IUser
   extends

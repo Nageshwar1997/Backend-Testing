@@ -3,7 +3,7 @@ import { RedisClientType } from "redis";
 import { HOUR } from "@beautinique/be-constants";
 import { redisClientConfig } from "@/configs";
 import { TUserModule, userModule } from "@/modules/user";
-import { sharedUtils } from "@/shared/utils";
+import { parseData, stringifyData } from "@/utils";
 
 export class RedisService {
   private client: RedisClientType | null = null;
@@ -72,11 +72,7 @@ export class RedisService {
     const { password: _, ...restUser } =
       typeof user.toObject === "function" ? user.toObject() : user;
 
-    await client.setEx(
-      `user:${user._id}`,
-      HOUR,
-      sharedUtils.JSON.stringify(restUser),
-    );
+    await client.setEx(`user:${user._id}`, HOUR, stringifyData(restUser));
   }
 
   // Get user (Redis fallback → DB → Redis set)
@@ -95,7 +91,7 @@ export class RedisService {
 
     if (cachedUser) {
       try {
-        return sharedUtils.JSON.parse(cachedUser);
+        return parseData(cachedUser);
       } catch {
         return await this.getDbUser(userId);
       }

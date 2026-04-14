@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { AuthRequest } from "../../types";
-import { sharedUtils } from "../utils";
+import { AuthRequest } from "../types";
 import { userModule } from "@/modules/user";
-import { envs } from "../../envs";
+import { envs } from "../envs";
 import { TRole } from "@beautinique/be-constants";
 import { AppError } from "@/classes";
+import { getAuthorizationToken, isValidMongoId, toMongoId } from "@/utils";
 
 const getUserIdFromToken = (req: Request) => {
   try {
@@ -20,7 +20,7 @@ const getUserIdFromToken = (req: Request) => {
       });
     }
 
-    const tokenWithoutBearer = sharedUtils.getAuthorizationToken(token);
+    const tokenWithoutBearer = getAuthorizationToken(token);
 
     const decoded = jwt.verify(
       tokenWithoutBearer,
@@ -74,7 +74,7 @@ const getUserIdFromToken = (req: Request) => {
   }
 };
 
-const authenticated =
+export const authenticated =
   (needPassword?: boolean) =>
   async (req: AuthRequest, _: Response, next: NextFunction) => {
     try {
@@ -94,13 +94,13 @@ const authenticated =
     }
   };
 
-const authorized =
+export const authorized =
   (allowedRoles: TRole[], needPassword?: boolean) =>
   async (req: AuthRequest, _: Response, next: NextFunction) => {
     try {
-      const userId = getUserIdFromToken(req);
+      const userId = toMongoId(getUserIdFromToken(req));
 
-      sharedUtils.isValidMongoId(userId, "Invalid userId", 400);
+      isValidMongoId(userId, "Invalid userId", 400);
 
       const user = await userModule.services.get.user_by_id({
         id: userId,
@@ -123,5 +123,3 @@ const authorized =
       next(error);
     }
   };
-
-export const authMiddleware = { authenticated, authorized };

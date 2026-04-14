@@ -2,6 +2,7 @@ import { TChatbotModuleInternal } from "../../types";
 import { ClientSession, Types } from "mongoose";
 import { chatbotModuleModels } from "../../models";
 import { chatbotConfig } from "@/configs";
+import { stringifyData } from "@/utils";
 
 export const getEmbeddedOrders = async (
   message: string,
@@ -165,7 +166,7 @@ export const createOrUpdateEmbeddedOrder = async ({
   order: TChatbotModuleInternal.IAggregatedEmbeddedOrder["order"];
   session?: ClientSession;
 }) => {
-  const searchText = JSON.stringify({
+  const searchText = stringifyData({
     "Order ID": order._id,
     "User Id": order.user?._id || order.user,
     "Order Status": order.status,

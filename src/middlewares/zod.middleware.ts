@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import { ZodObject } from "zod";
-import { sharedUtils } from "@/shared/utils";
+import { schemaValidator } from "@beautinique/be-zod";
 import { AppError } from "@/classes";
+import { segregateErrors } from "@/utils";
 
 export const zodMiddleware =
-  <T extends ZodObject<any>>(schema: T) =>
+  <T extends Parameters<typeof schemaValidator>[0]>(schema: T) =>
   (req: Request, _: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body ?? {});
+    const result = schemaValidator(schema, req.body ?? {});
 
     if (!result.success) {
       const errors = result.error.issues.map((err) => ({
@@ -14,7 +14,7 @@ export const zodMiddleware =
         message: err.message,
       }));
 
-      const { fieldErrors, globalErrors } = sharedUtils.segregateErrors(errors);
+      const { fieldErrors, globalErrors } = segregateErrors(errors);
       return next(
         new AppError({
           message: "Validation Error",

@@ -12,7 +12,7 @@ type CheckOptions = {
   query?: boolean;
 };
 
-const emptyRequest =
+export const emptyRequest =
   (options: CheckOptions) =>
   (req: Request, _: Response, next: NextFunction) => {
     try {
@@ -92,14 +92,9 @@ const emptyRequest =
     }
   };
 
-const requestId = (req: Request, res: Response, next: NextFunction) => {
+export const requestId = (req: Request, res: Response, next: NextFunction) => {
   const id = randomUUID();
   req.requestId = id; // ← must be on req
   res.setHeader("X-Request-Id", id);
   next();
-};
-
-export const requestMiddlewares = {
-  empty: emptyRequest,
-  id: requestId,
 };

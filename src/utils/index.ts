@@ -1,14 +1,14 @@
 import { Types } from "mongoose";
-import { envs } from "../../envs";
-import { TFieldErrors } from "../../types";
 import { TRole } from "@beautinique/be-constants";
 import { AppError } from "@/classes";
+import { envs } from "@/envs";
+import { _ID, TFieldErrors } from "@/types";
 
 const getURL = (devUrl: string, prodUrl: string) => {
   return envs.is_dev ? devUrl : prodUrl;
 };
 
-const getFrontendURL = (role: TRole) => {
+export const getFrontendURL = (role: TRole) => {
   const roleUrlMap: Record<TRole, string> = {
     ADMIN: getURL(envs.url.frontend.dev.admin, envs.url.frontend.prod.admin),
     SELLER: getURL(envs.url.frontend.dev.admin, envs.url.frontend.prod.admin),
@@ -19,11 +19,11 @@ const getFrontendURL = (role: TRole) => {
   return roleUrlMap[role] ?? roleUrlMap.USER;
 };
 
-const getBackendURL = () => {
+export const getBackendURL = () => {
   return getURL(envs.url.backend.dev, envs.url.backend.prod);
 };
 
-const stringifyData = (data: unknown): string => {
+export const stringifyData = (data: unknown): string => {
   try {
     return JSON.stringify(data);
   } catch {
@@ -31,7 +31,7 @@ const stringifyData = (data: unknown): string => {
   }
 };
 
-const parseData = (rawData: string) => {
+export const parseData = (rawData: string) => {
   try {
     return JSON.parse(rawData);
   } catch {
@@ -39,7 +39,9 @@ const parseData = (rawData: string) => {
   }
 };
 
-const segregateErrors = (errors: { field: string; message: string }[]) => {
+export const segregateErrors = (
+  errors: { field: string; message: string }[],
+) => {
   const fieldErrors: TFieldErrors = {};
   const globalErrors: string[] = [];
 
@@ -59,8 +61,10 @@ const segregateErrors = (errors: { field: string; message: string }[]) => {
   return { fieldErrors, globalErrors };
 };
 
-const isValidMongoId = (
-  id: string | string[],
+export const toMongoId = (id: _ID | string): _ID => new Types.ObjectId(id);
+
+export const isValidMongoId = (
+  id: string | string[] | _ID | _ID[],
   message: string,
   statusCode?: number,
 ): boolean => {
@@ -82,18 +86,4 @@ const isValidMongoId = (
 
 export const getAuthorizationToken = (token: string) => {
   return token.startsWith("Bearer ") ? token.split(" ")?.[1] : token;
-};
-
-export const sharedUtils = {
-  getUrl: {
-    frontend: getFrontendURL,
-    backend: getBackendURL,
-  },
-  JSON: {
-    stringify: stringifyData,
-    parse: parseData,
-  },
-  segregateErrors,
-  isValidMongoId,
-  getAuthorizationToken,
 };

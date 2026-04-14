@@ -1,7 +1,6 @@
 import multer, { MulterError } from "multer";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
-import { envs } from "../../envs";
 import { FILE_MIME, MAX_SIZE, MB } from "@beautinique/be-constants";
 import {
   IMulterCustomError,
@@ -9,6 +8,7 @@ import {
   IMulterValidation,
 } from "@/types";
 import { ErrorBuilder } from "@/classes";
+import { envs } from "@/envs";
 
 const getCustomError = ({ files = [], format, size }: IMulterCustomError) => {
   const error = new ErrorBuilder();
@@ -169,7 +169,7 @@ const getMulterDefaultError = ({
   return error.build();
 };
 
-export const multerMiddleware = ({
+export const validateMulter = ({
   type,
   fieldName,
   maxCount,

@@ -4,18 +4,24 @@ import express, { Request, Response } from "express";
 import { parse } from "qs";
 import http from "http";
 
-import { shared } from "./shared";
-import { mailService, redisService } from "./shared/services";
+import { mailService, redisService } from "./services";
 import { connectDB, socketConfigs } from "./configs";
 import { envs } from "./envs";
 import { router } from "./router";
+import {
+  CorsMiddleware,
+  DatabaseMiddleware,
+  LoggerMiddleware,
+  RequestMiddleware,
+  ResponseMiddleware,
+} from "./middlewares";
 
 const app = express();
 
 // ----------------- MIDDLEWARES ORDER -----------------
 
 // 1. Assign requestId first (for tracing logs)
-app.use(shared.middlewares.request.id);
+app.use(RequestMiddleware.requestId);
 
 // 2. Body parsers & static files
 app.use(express.json());
@@ -24,12 +30,12 @@ app.use(express.static(path.resolve("public")));
 app.set("query parser", (str: string) => parse(str));
 
 // 3. Logger (logs all requests)
-app.use(shared.middlewares.logger.request);
+app.use(LoggerMiddleware.requestLog);
 
 // 4. Custom middlewares
-app.use(shared.middlewares.response.success);
-app.use(shared.middlewares.cors);
-app.use(shared.middlewares.database);
+app.use(ResponseMiddleware.successResponse);
+app.use(CorsMiddleware.checkOrigin);
+app.use(DatabaseMiddleware.checkDbConnection);
 
 // ----------------- ROUTES -----------------
 // Home Route
@@ -41,9 +47,9 @@ app.get("/", (_: Request, res: Response) =>
 app.use("/api", router);
 
 // ----------------- ERROR HANDLING -----------------
-app.use(shared.middlewares.response.notFound);
-app.use(shared.middlewares.logger.error);
-app.use(shared.middlewares.response.error);
+app.use(ResponseMiddleware.notFoundResponse);
+app.use(LoggerMiddleware.errorLog);
+app.use(ResponseMiddleware.errorResponse);
 
 // ----------------- SERVER SETUP -----------------
 const server = http.createServer(app);

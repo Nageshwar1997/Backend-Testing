@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { Error as MongooseError } from "mongoose";
 
-import { sharedUtils } from "@/shared/utils";
 import { envs } from "@/envs";
 import { AppError } from "@/classes";
+import { segregateErrors } from "@/utils";
 
 const baseResponse = { success: false, error: true };
 
@@ -21,8 +21,7 @@ export const errorResponse = (
       message: errorObj.message,
     }));
 
-    const { fieldErrors, globalErrors } =
-      sharedUtils.segregateErrors(rawErrors);
+    const { fieldErrors, globalErrors } = segregateErrors(rawErrors);
 
     error = new AppError({
       message: "Validation Error",

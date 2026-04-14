@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { IUser } from "../types";
 import { User } from "../models";
 import { AppError } from "@/classes";
-import { redisService } from "@/shared/services";
+import { redisService } from "@/services";
 
 export const getUserByEmail = async (
   email: string,

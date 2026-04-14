@@ -2,13 +2,13 @@ import { google } from "googleapis";
 import axios from "axios";
 import { ParsedQs } from "qs";
 import { TAuthProvider } from "@beautinique/be-constants";
-import { sharedUtils } from "@/shared/utils";
+import { getBackendURL, parseData } from "@/utils";
 import { envs } from "@/envs";
 
 const getSocialAuthRedirectURL = (
   provider: Exclude<TAuthProvider, "MANUAL">,
 ) => {
-  const baseURL = sharedUtils.getUrl.backend();
+  const baseURL = getBackendURL();
 
   const redirectMap: Partial<Record<Exclude<TAuthProvider, "MANUAL">, string>> =
     {
@@ -75,7 +75,7 @@ const linkedinAuthClient = {
   },
   decode: (id_token: string) => {
     const base64Payload = id_token.split(".")[1];
-    const decoded = JSON.parse(Buffer.from(base64Payload, "base64").toString());
+    const decoded = parseData(Buffer.from(base64Payload, "base64").toString());
 
     return decoded;
   },

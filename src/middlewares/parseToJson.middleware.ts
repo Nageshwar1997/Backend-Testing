@@ -1,6 +1,7 @@
+import { parseData } from "@/utils";
 import { Request, Response, NextFunction } from "express";
 
-export const parseToJsonMiddleware = (fieldsToParse: string[] = []) => {
+export const parseToJson = (fieldsToParse: string[] = []) => {
   return (req: Request, _: Response, next: NextFunction) => {
     fieldsToParse.forEach((key) => {
       const value = req.body?.[key];
@@ -10,7 +11,7 @@ export const parseToJsonMiddleware = (fieldsToParse: string[] = []) => {
 
       if (typeof value === "string") {
         try {
-          const parsed = JSON.parse(value);
+          const parsed = parseData(value);
 
           // Replace only if parsed is an object or array
           if (parsed && typeof parsed === "object") {
@@ -18,7 +19,7 @@ export const parseToJsonMiddleware = (fieldsToParse: string[] = []) => {
           }
           // Else, keep the original string value
         } catch {
-          // If JSON.parse fails, keep original value as it is
+          // If parseData fails, keep original value as it is
         }
       }
     });

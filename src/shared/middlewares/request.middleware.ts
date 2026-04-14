@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { randomUUID } from "crypto";
-import { sharedClasses } from "../classes";
+import { AppError } from "@/classes";
 
 type CheckOptions = {
   body?: boolean;
@@ -32,7 +32,7 @@ const emptyRequest =
 
       // Case 1: If both body and files are required, and both are empty
       if (filesOrBody && !file && isBodyEmpty && isFilesEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some data in the body or files!",
           statusCode: 400,
         });
@@ -40,7 +40,7 @@ const emptyRequest =
 
       // Case 2: If both body and file are required, and both are empty
       if (fileOrBody && !files && isBodyEmpty && isFileEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some data in the body or file!",
           statusCode: 400,
         });
@@ -48,7 +48,7 @@ const emptyRequest =
 
       // Case 3: If only body is required and is empty
       if (!files && !file && body && isBodyEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some data in the body!",
           statusCode: 400,
         });
@@ -56,7 +56,7 @@ const emptyRequest =
 
       // Case 4: If only files are required and are empty
       if (files && !file && !body && isFilesEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some files!",
           statusCode: 400,
         });
@@ -64,7 +64,7 @@ const emptyRequest =
 
       // Case 5: If only single file is required and is empty
       if (file && !files && !body && isFileEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some files!",
           statusCode: 400,
         });
@@ -72,7 +72,7 @@ const emptyRequest =
 
       // Case 6: If params are required and are empty
       if (params && isParamsEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some params!",
           statusCode: 400,
         });
@@ -80,7 +80,7 @@ const emptyRequest =
 
       // Case 7: If query is required and is empty
       if (query && isQueryEmpty) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Please provide some query!",
           statusCode: 400,
         });

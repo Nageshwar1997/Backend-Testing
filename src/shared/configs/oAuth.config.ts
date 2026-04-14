@@ -2,21 +2,20 @@ import { google } from "googleapis";
 import axios from "axios";
 import { ParsedQs } from "qs";
 import { sharedUtils } from "../utils";
-import { TSharedInternal } from "../types";
-import { envs } from "../envs";
+import { envs } from "../../envs";
+import { TAuthProvider } from "@beautinique/be-constants";
 
 const getSocialAuthRedirectURL = (
-  provider: Exclude<TSharedInternal.TAuthProvider, "MANUAL">,
+  provider: Exclude<TAuthProvider, "MANUAL">,
 ) => {
   const baseURL = sharedUtils.getUrl.backend();
 
-  const redirectMap: Partial<
-    Record<Exclude<TSharedInternal.TAuthProvider, "MANUAL">, string>
-  > = {
-    GOOGLE: envs.oAuth.google.redirect_endpoint,
-    LINKEDIN: envs.oAuth.linkedin.redirect_endpoint,
-    GITHUB: envs.oAuth.github.redirect_endpoint,
-  };
+  const redirectMap: Partial<Record<Exclude<TAuthProvider, "MANUAL">, string>> =
+    {
+      GOOGLE: envs.oAuth.google.redirect_endpoint,
+      LINKEDIN: envs.oAuth.linkedin.redirect_endpoint,
+      GITHUB: envs.oAuth.github.redirect_endpoint,
+    };
 
   return `${baseURL}${redirectMap[provider]}`;
 };

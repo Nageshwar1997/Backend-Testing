@@ -80,6 +80,6 @@ export const envs = {
   },
   jwt_secret: process.env.JWT_SECRET!,
   mongo_uri: process.env.MONGODB_URI!,
-  is_dev_mode: process.env.IS_DEV! === "true",
+  is_dev: process.env.IS_DEV! === "true",
   port: process.env.PORT! || 5454,
 };

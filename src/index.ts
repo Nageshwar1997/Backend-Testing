@@ -5,6 +5,7 @@ import { parse } from "qs";
 import http from "http";
 
 import { shared } from "./shared";
+import { mailService, redisService } from "./shared/services";
 
 const app = express();
 
@@ -53,10 +54,7 @@ shared.configs.socket.namespace("orders");
 (async () => {
   try {
     await shared.configs.connectDB();
-    await Promise.all([
-      shared.services.redis.connect(),
-      shared.services.mail.checkConnection(),
-    ]);
+    await Promise.all([redisService.connect(), mailService.checkConnection()]);
 
     server.listen(shared.envs.port, () => {
       console.log(`Server running on port: ${shared.envs.port}`);

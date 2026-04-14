@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { TUserModuleInternal } from "../types";
+import { ISeller, IUser, IWishlist } from "../types";
 import {
   COUNTRIES,
   ROLES,
@@ -7,7 +7,7 @@ import {
   STATES_AND_UTS,
 } from "@beautinique/be-constants";
 
-export const userSchema = new Schema<TUserModuleInternal.IUser>(
+export const userSchema = new Schema<IUser>(
   {
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
@@ -28,9 +28,7 @@ userSchema.index(
 );
 userSchema.index({ role: 1 });
 
-const businessAddressSchema = new Schema<
-  TUserModuleInternal.ISeller["businessAddress"]
->(
+const businessAddressSchema = new Schema<ISeller["businessAddress"]>(
   {
     address: { type: String, required: true, minlength: 3 },
     landmark: { type: String, default: "" },
@@ -65,9 +63,7 @@ const businessAddressSchema = new Schema<
   { versionKey: false, _id: false },
 );
 
-const personalDetailsSchema = new Schema<
-  TUserModuleInternal.ISeller["personalDetails"]
->(
+const personalDetailsSchema = new Schema<ISeller["personalDetails"]>(
   {
     name: { type: String, required: true, minlength: 2, maxlength: 50 },
     email: { type: String, required: true },
@@ -76,9 +72,7 @@ const personalDetailsSchema = new Schema<
   { versionKey: false, _id: false },
 );
 
-const businessDetailsSchema = new Schema<
-  TUserModuleInternal.ISeller["businessDetails"]
->(
+const businessDetailsSchema = new Schema<ISeller["businessDetails"]>(
   {
     name: { type: String, required: true, minlength: 2 },
     email: { type: String, required: true },
@@ -88,9 +82,7 @@ const businessDetailsSchema = new Schema<
   { versionKey: false, _id: false },
 );
 
-const requiredDocumentsSchema = new Schema<
-  TUserModuleInternal.ISeller["requiredDocuments"]
->(
+const requiredDocumentsSchema = new Schema<ISeller["requiredDocuments"]>(
   {
     gst: { type: String, required: true },
     itr: { type: String, required: true },
@@ -100,7 +92,7 @@ const requiredDocumentsSchema = new Schema<
   { versionKey: false, _id: false },
 );
 
-export const sellerSchema = new Schema<TUserModuleInternal.ISeller>(
+export const sellerSchema = new Schema<ISeller>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     businessAddress: businessAddressSchema,
@@ -116,16 +108,10 @@ export const sellerSchema = new Schema<TUserModuleInternal.ISeller>(
   { versionKey: false, timestamps: true },
 );
 
-export const wishlistSchema = new Schema<TUserModuleInternal.IWishlist>(
+export const wishlistSchema = new Schema<IWishlist>(
   {
     _id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   },
   { versionKey: false, timestamps: true },
 );
-
-export const userModuleSchemas = {
-  user: userSchema,
-  seller: sellerSchema,
-  wishlist: wishlistSchema,
-};

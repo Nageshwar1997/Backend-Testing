@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Nageshwar1997/Backend-Testing#readme",
   "dependencies": {
     "@beautinique/be-constants": "^1.0.5",
+    "@beautinique/be-zod": "^1.0.6",
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",

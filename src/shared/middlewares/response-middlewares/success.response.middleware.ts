@@ -1,4 +1,4 @@
-import { sharedClasses } from "@/shared/classes";
+import { AppSuccess } from "@/classes";
 import { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {
@@ -16,7 +16,7 @@ export const successResponse = (
   next: NextFunction,
 ) => {
   res.success = (statusCode: number, message: string, data: object = {}) => {
-    const response = new sharedClasses.AppSuccess(statusCode, message, data);
+    const response = new AppSuccess(statusCode, message, data);
 
     res.status(statusCode).json({
       success: true,

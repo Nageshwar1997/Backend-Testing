@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodObject } from "zod";
 import { sharedUtils } from "@/shared/utils";
-import { sharedClasses } from "@/shared/classes";
+import { AppError } from "@/classes";
 
 export const zodMiddleware =
   <T extends ZodObject<any>>(schema: T) =>
@@ -16,7 +16,7 @@ export const zodMiddleware =
 
       const { fieldErrors, globalErrors } = sharedUtils.segregateErrors(errors);
       return next(
-        new sharedClasses.AppError({
+        new AppError({
           message: "Validation Error",
           statusCode: 400,
           code: "VALIDATION_ERROR",

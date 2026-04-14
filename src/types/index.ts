@@ -1,8 +1,8 @@
-/* ============================ Error Types Start ============================ */
-
-import { TUserModule } from "@/modules/user";
+import { IUser } from "@/modules/user/types";
 import { Request } from "express";
-import multer, { MulterError } from "multer";
+import { MulterError, Options } from "multer";
+
+/* ============================ Error Types Start ============================ */
 
 type TErrorCode =
   | "VALIDATION_ERROR"
@@ -36,11 +36,8 @@ export interface IMulterValidation extends TCommonMulterFileConfigs {
   type: "single" | "array" | "any" | "fields" | "none";
   fieldName?: string;
   maxCount?: number;
-  fieldsConfig?: {
-    name: string;
-    maxCount: number;
-  }[];
-  limits?: multer.Options["limits"];
+  fieldsConfig?: { name: string; maxCount: number }[];
+  limits?: Options["limits"];
 }
 
 export interface IMulterCustomError extends TCommonMulterFileConfigs {
@@ -59,10 +56,8 @@ export interface IMulterDefaultError extends Pick<
 
 /* ============================ Auth Types Start ============================ */
 
-export type TAuthProvider = "GOOGLE" | "MANUAL" | "LINKEDIN" | "GITHUB";
-
 export interface AuthRequest extends Request {
-  user?: TUserModule.IUser; // User object without password
+  user?: IUser;
 }
 
 /* ============================ Auth Types End ============================ */
@@ -71,45 +66,9 @@ export interface AuthRequest extends Request {
 
 /* ============================ User Types Start ============================ */
 
-export type TRole = "USER" | "SELLER" | "ADMIN" | "MASTER";
-
 /* ============================ User Types End ============================ */
 
 /* ====================================== || ====================================== */
-
-/* ============================ Zod Types Start ============================ */
-
-type TZodCompareConfigs = { min?: number; max?: number };
-type TZodRegex = { regex: RegExp; message: string };
-
-type TZodCommonBaseConfigs = {
-  field: string;
-  parentField?: string;
-  label: string;
-  parentLabel?: string;
-};
-
-export interface IZodStringConfigs
-  extends TZodCommonBaseConfigs, TZodCompareConfigs {
-  allowSpace?: "noSpace" | "singleSpace" | "anySpace";
-  nonEmpty?: boolean;
-  customRegexes?: TZodRegex[];
-  customRegex?: TZodRegex;
-  lowerOrUpper?: "upper" | "lower";
-}
-
-export interface IZodNumberConfigs
-  extends TZodCommonBaseConfigs, TZodCompareConfigs {
-  isInt?: boolean;
-  isPositive?: boolean;
-  isNegative?: boolean;
-}
-
-export interface IZodEnumsConfigs extends TZodCommonBaseConfigs {
-  enumValues: readonly string[];
-}
-
-/* ============================ Zod Types End ============================ */
 
 /* ====================================== || ====================================== */
 

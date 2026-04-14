@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { connection } from "mongoose";
-import { sharedClasses } from "../classes";
+import { AppError } from "@/classes";
 
 export const checkDbConnection = async (
   _: Request,
@@ -12,7 +12,7 @@ export const checkDbConnection = async (
       console.log("✅ DB connection is ready");
     } else {
       console.warn("⚠️ Database not ready, readyState:", connection.readyState);
-      throw new sharedClasses.AppError({
+      throw new AppError({
         message: "Database not ready",
         statusCode: 500,
         code: "INTERNAL_ERROR",

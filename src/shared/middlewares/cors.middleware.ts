@@ -1,6 +1,6 @@
 import cors from "cors";
 import { ORIGINS } from "../constants";
-import { sharedClasses } from "../classes";
+import { AppError } from "@/classes";
 
 export const checkOrigin = cors({
   origin: (origin, callback) => {
@@ -8,7 +8,7 @@ export const checkOrigin = cors({
       callback(null, true);
     } else {
       callback(
-        new sharedClasses.AppError({
+        new AppError({
           message: "Not allowed by CORS",
           statusCode: 403,
           code: "AUTH_ERROR",

@@ -1,8 +1,8 @@
+import { envs } from "@/envs";
 import axios, { AxiosError } from "axios";
-import { envs } from "../envs";
 
-export class Mail {
-  private baseUrl = envs.is_dev_mode
+export class MailService {
+  private baseUrl = envs.is_dev
     ? envs.mail_service.base_url.dev
     : envs.mail_service.base_url.prod;
   private getErrorMessage(error: unknown, defaultMsg = "Something went wrong") {

@@ -1,17 +1,17 @@
 import multer, { MulterError } from "multer";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
-import { sharedClasses } from "../classes";
-import { envs } from "../envs";
-import { TSharedInternal } from "../types";
+import { envs } from "../../envs";
 import { FILE_MIME, MAX_SIZE, MB } from "@beautinique/be-constants";
+import {
+  IMulterCustomError,
+  IMulterDefaultError,
+  IMulterValidation,
+} from "@/types";
+import { ErrorBuilder } from "@/classes";
 
-const getCustomError = ({
-  files = [],
-  format,
-  size,
-}: TSharedInternal.IMulterCustomError) => {
-  const error = new sharedClasses.ErrorBuilder();
+const getCustomError = ({ files = [], format, size }: IMulterCustomError) => {
+  const error = new ErrorBuilder();
 
   // Limits
   const imageSizeLimit = size?.IMAGE ?? MAX_SIZE.IMAGE;
@@ -88,13 +88,13 @@ const getMulterDefaultError = ({
   err,
   fieldName = "",
   maxCount,
-}: TSharedInternal.IMulterDefaultError) => {
-  const error = new sharedClasses.ErrorBuilder();
+}: IMulterDefaultError) => {
+  const error = new ErrorBuilder();
 
   if (!err) return error.build();
 
   const getCause = (cause?: unknown) => {
-    return cause && envs.is_dev_mode ? ` (cause: ${String(cause)})` : "";
+    return cause && envs.is_dev ? ` (cause: ${String(cause)})` : "";
   };
 
   if (err instanceof MulterError) {
@@ -177,7 +177,7 @@ export const multerMiddleware = ({
   limits,
   format,
   size,
-}: TSharedInternal.IMulterValidation) => {
+}: IMulterValidation) => {
   const storage = multer.memoryStorage();
   const upload = multer({ storage, limits });
 
@@ -215,7 +215,7 @@ export const multerMiddleware = ({
 
   return (req: Request, res: Response, next: NextFunction) => {
     uploadMiddleware(req, res, (err) => {
-      const error = new sharedClasses.ErrorBuilder();
+      const error = new ErrorBuilder();
 
       // Multer errors
       error.merge(getMulterDefaultError({ err, fieldName, maxCount }));
@@ -231,7 +231,7 @@ export const multerMiddleware = ({
       }
 
       // File validation
-      const checkableTypes: TSharedInternal.IMulterValidation["type"][] = [
+      const checkableTypes: IMulterValidation["type"][] = [
         "single",
         "array",
         "any",

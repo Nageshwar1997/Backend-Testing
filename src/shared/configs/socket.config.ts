@@ -5,9 +5,9 @@ import {
   Namespace,
 } from "socket.io";
 
-import { sharedClasses } from "../classes";
 import { ORIGINS } from "../constants";
 import { chatbotModule } from "@/modules/chatbot";
+import { AppError } from "@/classes";
 
 let io: SocketIOServer | null = null;
 
@@ -21,7 +21,7 @@ const InitSocket = (server: HttpServer) => {
           callback(null, true);
         } else {
           callback(
-            new sharedClasses.AppError({
+            new AppError({
               message: "Not allowed by CORS",
               statusCode: 403,
               code: "AUTH_ERROR",

@@ -6,7 +6,7 @@ import {
   initChatModel,
   SystemMessage,
 } from "langchain";
-import { envs } from "@/shared/envs";
+import { envs } from "@/envs";
 import { chatbotModuleUtils } from "../utils";
 import { chatbotModuleServices } from "../services";
 
@@ -61,7 +61,8 @@ export const initOrderSocket = (socket: Socket) => {
         session.lastQuery = message;
       }
       // Prepare minimal order info for AI context
-      const minimalOrders = chatbotModuleServices.order.getMinimalOrdersForAiPrompt(matchedOrders);
+      const minimalOrders =
+        chatbotModuleServices.order.getMinimalOrdersForAiPrompt(matchedOrders);
 
       // Push user message with order context
       session.history.push(
@@ -117,7 +118,7 @@ export const initOrderSocket = (socket: Socket) => {
       let errMsg =
         "The AI shopping assistant is currently under heavy load. Please try again in a few moments.";
 
-      if (envs.is_dev_mode) {
+      if (envs.is_dev) {
         if (err?.body) {
           try {
             const parsed = JSON.parse(err.body);

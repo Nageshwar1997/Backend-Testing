@@ -1,4 +1,4 @@
-import { TErrorPayload } from "../types";
+import { TErrorPayload } from "@/types";
 import { AppError } from "./AppError";
 
 export class ErrorBuilder {

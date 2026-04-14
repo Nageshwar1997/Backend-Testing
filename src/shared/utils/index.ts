@@ -1,14 +1,15 @@
 import { Types } from "mongoose";
-import { envs } from "../envs";
-import { TSharedInternal } from "../types";
-import { sharedClasses } from "../classes";
+import { envs } from "../../envs";
+import { TFieldErrors } from "../../types";
+import { TRole } from "@beautinique/be-constants";
+import { AppError } from "@/classes";
 
 const getURL = (devUrl: string, prodUrl: string) => {
-  return envs.is_dev_mode ? devUrl : prodUrl;
+  return envs.is_dev ? devUrl : prodUrl;
 };
 
-const getFrontendURL = (role: TSharedInternal.TRole) => {
-  const roleUrlMap: Record<TSharedInternal.TRole, string> = {
+const getFrontendURL = (role: TRole) => {
+  const roleUrlMap: Record<TRole, string> = {
     ADMIN: getURL(envs.url.frontend.dev.admin, envs.url.frontend.prod.admin),
     SELLER: getURL(envs.url.frontend.dev.admin, envs.url.frontend.prod.admin),
     MASTER: getURL(envs.url.frontend.dev.master, envs.url.frontend.prod.master),
@@ -39,7 +40,7 @@ const parseData = (rawData: string) => {
 };
 
 const segregateErrors = (errors: { field: string; message: string }[]) => {
-  const fieldErrors: TSharedInternal.TFieldErrors = {};
+  const fieldErrors: TFieldErrors = {};
   const globalErrors: string[] = [];
 
   errors.forEach(({ field, message }) => {
@@ -69,7 +70,7 @@ const isValidMongoId = (
 
   if (!isValid) {
     console.log(`Invalid ObjectId, ${message} : `, id);
-    throw new sharedClasses.AppError({
+    throw new AppError({
       message,
       code: "VALIDATION_ERROR",
       statusCode: statusCode || 400,

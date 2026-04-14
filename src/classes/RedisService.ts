@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
 import { RedisClientType } from "redis";
-import { TUserModule, userModule } from "../../modules/user";
-import { sharedConfigs } from "../configs";
-import { sharedUtils } from "../utils";
 import { HOUR } from "@beautinique/be-constants";
+import { sharedConfigs } from "@/shared/configs";
+import { TUserModule, userModule } from "@/modules/user";
+import { sharedUtils } from "@/shared/utils";
 
-export class Redis {
+export class RedisService {
   private client: RedisClientType | null = null;
   private isReady: boolean = false;
 

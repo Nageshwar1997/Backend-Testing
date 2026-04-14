@@ -1,6 +1,6 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import { sharedClasses } from "../classes";
+import { AppError } from "@/classes";
 
 const { combine, timestamp, printf, colorize } = winston.format;
 
@@ -67,13 +67,13 @@ const errorLogger = expressWinston.errorLogger({
 
   // Log level: 5xx → error, 4xx → warn (optional)
   level: (_req, _res, err) => {
-    const e = err as InstanceType<typeof sharedClasses.AppError>;
+    const e = err as InstanceType<typeof AppError>;
     return e.statusCode && e.statusCode >= 500 ? "error" : "warn";
   },
 
   // Skip non-error responses (<=400)
   skip: (_req, _res, err) => {
-    const e = err as InstanceType<typeof sharedClasses.AppError>;
+    const e = err as InstanceType<typeof AppError>;
     return !e.statusCode || e.statusCode < 400;
   },
 });

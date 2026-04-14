@@ -8,7 +8,7 @@ import {
 import { IProductChatSession } from "../types";
 import { chatbotModuleServices } from "../services";
 import { chatbotModuleUtils } from "../utils";
-import { envs } from "@/shared/envs";
+import { envs } from "@/envs";
 
 const productChatHistory = new Map<string, IProductChatSession>();
 
@@ -104,7 +104,7 @@ export const initProductSocket = (socket: Socket) => {
       let errMsg =
         "The AI shopping assistant is currently under heavy load. Please try again in a few moments.";
 
-      if (envs.is_dev_mode) {
+      if (envs.is_dev) {
         if (err?.body) {
           try {
             const parsed = JSON.parse(err.body);

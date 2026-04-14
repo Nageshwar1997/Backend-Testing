@@ -1,5 +1,5 @@
 import { createClient, RedisClientType } from "redis";
-import { envs } from "../envs";
+import { envs } from "../../envs";
 
 export const redisConfig: RedisClientType = createClient({
   socket: {

@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-import { TSharedInternal } from "../types";
-import { sharedClasses } from "../classes";
+import { AuthRequest } from "../../types";
 import { sharedUtils } from "../utils";
 import { userModule } from "@/modules/user";
-import { envs } from "../envs";
+import { envs } from "../../envs";
+import { TRole } from "@beautinique/be-constants";
+import { AppError } from "@/classes";
 
 const getUserIdFromToken = (req: Request) => {
   try {
     const token = req.get("Authorization");
 
     if (!token) {
-      throw new sharedClasses.AppError({
+      throw new AppError({
         message: "You are not authenticated, please login",
         statusCode: 401,
         code: "AUTH_ERROR",
@@ -27,13 +28,13 @@ const getUserIdFromToken = (req: Request) => {
     ) as JwtPayload & { userId: string };
 
     if (!decoded) {
-      throw new sharedClasses.AppError({
+      throw new AppError({
         message: "Invalid token",
         statusCode: 401,
         code: "AUTH_ERROR",
       });
     } else if (!decoded.userId) {
-      throw new sharedClasses.AppError({
+      throw new AppError({
         message: "UserId not found",
         statusCode: 404,
         code: "NOT_FOUND",
@@ -63,7 +64,7 @@ const getUserIdFromToken = (req: Request) => {
           errorMessage = `Token error: ${message}, ${comMsg}`;
           break;
       }
-      throw new sharedClasses.AppError({
+      throw new AppError({
         message: errorMessage,
         statusCode: 401,
         code: "AUTH_ERROR",
@@ -75,7 +76,7 @@ const getUserIdFromToken = (req: Request) => {
 
 const authenticated =
   (needPassword?: boolean) =>
-  async (req: TSharedInternal.AuthRequest, _: Response, next: NextFunction) => {
+  async (req: AuthRequest, _: Response, next: NextFunction) => {
     try {
       const userId = getUserIdFromToken(req);
 
@@ -94,8 +95,8 @@ const authenticated =
   };
 
 const authorized =
-  (allowedRoles: TSharedInternal.TRole[], needPassword?: boolean) =>
-  async (req: TSharedInternal.AuthRequest, _: Response, next: NextFunction) => {
+  (allowedRoles: TRole[], needPassword?: boolean) =>
+  async (req: AuthRequest, _: Response, next: NextFunction) => {
     try {
       const userId = getUserIdFromToken(req);
 
@@ -108,7 +109,7 @@ const authorized =
       });
 
       if (!allowedRoles.includes(user.role)) {
-        throw new sharedClasses.AppError({
+        throw new AppError({
           message: "Unauthorized",
           statusCode: 401,
           code: "AUTH_ERROR",

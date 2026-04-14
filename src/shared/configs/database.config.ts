@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { envs } from "../envs";
+import { envs } from "../../envs";
 
 // TypeScript global augmentation
 declare global {
@@ -45,13 +45,13 @@ export const databaseConfig = async (): Promise<typeof mongoose> => {
 
   const newConnection = await mongoose.connect(envs.mongo_uri, {
     ...MONGO_OPTIONS,
-    ...(envs.is_dev_mode && { maxPoolSize: 5, minPoolSize: 1 }),
+    ...(envs.is_dev && { maxPoolSize: 5, minPoolSize: 1 }),
   });
 
   cachedConnection = newConnection;
 
   // Store globally for hot reload (dev)
-  if (envs.is_dev_mode) {
+  if (envs.is_dev) {
     global.mongooseConn = newConnection;
   }
 

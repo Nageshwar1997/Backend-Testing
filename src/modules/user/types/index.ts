@@ -1,53 +1,37 @@
-import { TAddressModule } from "@/modules/address";
-import { TAuthProvider, TRole } from "@beautinique/be-constants";
 import { Document, Types } from "mongoose";
+import { TAuthProvider, TRole } from "@beautinique/be-constants";
+import { TRegister, TSellerRequest } from "@beautinique/be-zod";
 
-export interface IUser extends Document {
-  _id: Types.ObjectId;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
+export type _ID = Types.ObjectId;
+
+export type TId = { _id: _ID };
+export type TTimestamp = { createdAt: Date; updatedAt: Date };
+
+export interface IUser
+  extends
+    Omit<TRegister, "otp" | "confirmPassword">,
+    TTimestamp,
+    TId,
+    Document {
   role: TRole;
   providers: TAuthProvider[];
   profilePic?: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
-
-type TBaseSeller = Pick<IUser, "email" | "phoneNumber"> & {
-  name: string;
-};
 
 export type TSeller = {
-  user: Types.ObjectId;
+  user: _ID;
   approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
-  personalDetails: TBaseSeller;
-  businessDetails: TBaseSeller & { category: string };
-  requiredDocuments: {
-    gst: string;
-    itr: string;
-    addressProof: string;
-    geoTagging: string;
-  };
-  businessAddress: Pick<
-    TAddressModule.TAddress,
-    "address" | "landmark" | "city" | "state" | "pinCode" | "country"
-  > & { gst: string; pan: string };
+  personalDetails: Omit<TSellerRequest["businessDetails"], "category">;
+  businessDetails: TSellerRequest["businessDetails"];
+  requiredDocuments: Record<
+    "gst" | "itr" | "addressProof" | "geoTagging",
+    string
+  >;
+  businessAddress: TSellerRequest["businessAddress"];
 };
 
-export interface ISeller extends Document, TSeller {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export interface ISeller extends Document, TSeller, TId, TTimestamp {}
 
-export interface IWishlist {
-  _id: Types.ObjectId;
+export interface IWishlist extends Document, TId, TTimestamp {
   products: Types.ObjectId[];
-  createdAt: Date;
-  updatedAt: Date;
 }
-
-export * as TUserModuleInternal from ".";
